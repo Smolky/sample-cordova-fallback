@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        
+        <title>Web SePLN 2017</title>
+        
+        <!-- Load libraries -->
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script type="text/javascript" charset="utf-8" src="jquery.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            
+            // Body DOM element
+            var body;
+            
+            
+            // @var url String
+            var url = "http://sepln2017.um.es";
+            
+            
+            // @var options String <https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/>
+            var options="location=yes,hidden=yes,clearcache=yes,toolbar=no,zoom=no,hardwareback=true";
+
+            
+            // Wait for device API libraries to load
+            function onLoad () {
+                
+                // Fetch body
+                body = $('body');
+                
+                
+                // Check
+                body.addClass ('loading-state');
+                document.addEventListener ("deviceready", onDeviceReady, false);
+                document.addEventListener("backbutton", function () {
+                    navigator.app.exitApp();
+                }, false);
+                
+            }
+            
+            
+            // Handle error
+            function loadErrorCallBack () {
+                body.removeClass ('loading-state');
+                body.addClass ('error-state');
+            }
+
+
+            // device APIs are available
+            function onDeviceReady() {
+
+                // Check connection
+                if ( ! navigator.onLine) {
+                    loadErrorCallBack ();
+                    return;
+                }
+                
+                try {
+                    
+                    // Open
+                    var ref = cordova.InAppBrowser.open (url, "_self", options);
+                    
+                    
+                    // Register events
+                    // Errors
+                    ref.addEventListener ('loaderror', loadErrorCallBack);
+                    
+                    
+                    // Stop
+                    ref.addEventListener ('loadstop', function () { 
+                        ref.show ();
+                    });
+                    
+                // Handle errors
+                } catch (e) {
+                    loadErrorCallBack ();
+                } 
+            }
+        </script>
+        
+        <style>
+            
+
+            *,
+            *::before,
+            *::after {
+              box-sizing: border-box;
+            }
+
+            html, 
+            body {  
+              height: 100%;
+              width: 100%;
+              font-size: 16px;
+            }
+ 
+            html {
+              background: #222;
+            }
+            
+            body {
+              background: #fff;
+              margin: auto;
+              font-size: 1.5em;
+              color: #222;
+              width: 0%;
+            }
+
+            body.loading-state {
+              height: .25rem;
+              top: 0;
+              bottom: 0;
+
+              position: absolute;
+              
+              
+              -webkit-transition: all 3s ease-out;
+                 -moz-transition: all 3s ease-out;
+                      transition: all 3s ease-out;
+            }
+            
+            body.loading-state {
+              width: 100%;
+            }
+            
+            .messages {
+              display: none;
+              line-height: 1.5;
+              padding: 8rem 3rem;
+              font-weight: bold;
+              font-family: serif;                
+            }
+            
+            body.error-state {
+              width: 100%;
+              font-size: 3rem;
+              text-align: center;
+              color: white;
+              background-color: crimson;
+            }
+            
+            body.error-state .messages {
+              display: block;
+            }
+
+            
+        </style>
+        
+    </head>
+
+    <body onload="onLoad()">
+        <div class="messages">
+            <span class="error">Ha ocurrido un error. Por favor, asegurese de que está conectado a Internet...</span>
+        </div>
+    </body>
+    
+</html>
