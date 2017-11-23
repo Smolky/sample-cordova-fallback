@@ -1,4 +1,12 @@
 # Cómo desplegar Cordova WebApps para cargar una página
+El presente documento debe de servir de guía para instalar el entorno de desarrollo de Apache Cordova y poder crear aplicaciones web que integren una página web. 
+
+Los requisitos de este proyecto son:
+- Poder abrir una página en un navegador de forma nativa
+- Manejar el estado de conexión offline-online
+- Poder salir de la aplicación al volver atrás
+- Manejar hojas de estilo diferentes
+
 ## Instalación
 Los pasos para instalar Apache Cordova en Windows se encuentran en el siguiente enlace:
 https://evothings.com/doc/build/cordova-install-windows.html
@@ -48,18 +56,26 @@ Los iconos de la app se pueden generar automáticamente a través de la siguient
 Es posible pasarle una imagen y el genera los archivos necesarios y el código para el config.xml
 
 ## Página web
-En la carpeta /www es necesario añadir los archivos jquery.js y cordova.js. Es importante cargarlos de forma local porque los usaremos también en casos donde no haya internet.
+En la carpeta `/www` encontramos la plantilla del proyecto
 
-Luego es necesario crear un fichero .html con el siguiente esqueleto
-http://semantics.inf.um.es/joseagd/sample-cordova/index.txt
-
-La manera de cargar los mensajes se pueden configurar desde el mismo CSS y HTML. Se recomienda usar uno sencillo, pero aquí se pueden encontrar diferentes ideas
-https://codepen.io/tag/loading%20screen/
-
-La aplicación de prueba se puede descargar aquí
-https://semantics.inf.um.es/joseagd/sample-cordova/android-debug.apk
+Básicamente se encarga de manejar los eventos del objeto `InAppBrowser`. 
 
 
+### Estilos personalizados
+Una vez carga la página, el siguiente código es inyectado dentro de la página
 
+```javascript
+ref.executeScript ({code: "(function() { document.getElementsByTagName ('body')[0].className = document.getElementsByTagName ('body')[0].className.concat (' state-iframe') })()"});
+```
 
+esto lo que hace es añadir una clase `state-iframe` al body de la página, por lo que luego podremos editar estilos, definiendo esta serie 
+de reglas
 
+```css
+    body.state-iframe {
+        ...
+    }
+```
+
+También es posible añadir CSS directamente: https://stackoverflow.com/questions/24098838/phonegap-inappbrowser-insertcss-file
+                    
