@@ -23,7 +23,8 @@ cordova platform add android
 El resultado de ejecutar este proceso es la creación de una carpeta llamada DemoProject. Con la siguiente estructura de ficheros dentro
 
 ```
-plugins/
+res/ Aquí van los iconos y recursos de la aplicación
+plugins/ Aq
 www/
 config.xml
 ```
@@ -58,8 +59,26 @@ Es posible pasarle una imagen y el genera los archivos necesarios y el código p
 ## Página web
 En la carpeta `/www` encontramos la plantilla del proyecto
 
-Básicamente se encarga de manejar los eventos del objeto `InAppBrowser`. 
+Básicamente se encarga de manejar los eventos del objeto `InAppBrowser`. Para decir qué página queremos cambiar tenemos que:
 
+1. Cambiar la variable `url` dentro de `index.html`
+
+```javascript
+/* @var url String */
+var url = "http://sepln2017.um.es";
+```
+
+2. Subir los iconos a la carpeta `/res`
+
+3. Modificar el ficheo `config.xml` para establecer el título de la aplicación
+
+```xml
+<name>SePLN 2017</name>
+    <description>
+        XXXIII CONGRESO INTERNACIONAL DE LA SOCIEDAD ESPAÑOLA PARA EL PROCESAMIENTO DEL LENGUAJE NATURAL
+    </description>
+    ...
+```
 
 ### Estilos personalizados
 Una vez carga la página, el siguiente código es inyectado dentro de la página
