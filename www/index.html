@@ -10,16 +10,24 @@
         <script type="text/javascript" charset="utf-8" src="jquery.js"></script>
         <script type="text/javascript" charset="utf-8">
             
-            // Body DOM element
+            /* body DOM element */
             var body;
             
             
-            // @var url String
+            /* @var ref cordova.InAppBrowser The reference to the browser */
+            var ref;
+            
+            
+            /* @var url String */
             var url = "http://sepln2017.um.es";
             
             
-            // @var options String <https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/>
-            var options="location=yes,hidden=yes,clearcache=yes,toolbar=no,zoom=no,hardwareback=true";
+            /* @var loaded Boolean Tells wheter the page has been loaded or not */
+            var loaded = false;
+            
+            
+            /* @var options String @link https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/ */
+            var options="location=no,hidden=yes,clearcache=yes,toolbar=no,zoom=no,hardwareback=true,useWideViewPort=yes";
 
             
             // Wait for device API libraries to load
@@ -32,10 +40,74 @@
                 // Check
                 body.addClass ('loading-state');
                 document.addEventListener ("deviceready", onDeviceReady, false);
-                document.addEventListener("backbutton", function () {
-                    navigator.app.exitApp();
+                
+                
+                // Offline and online events
+                document.addEventListener ("offline", function () {
+                
+                    // The page is loaded. Unload the browser, back to us
+                    if (loaded) {
+                        ref.close ();
+                        ref = undefined;
+                        loaded = false;
+                    }
+                    
+                    body.addClass ('error-state');
+                    
                 }, false);
                 
+                
+                document.addEventListener ("online", function () {
+                
+                    if ( ! loaded) {
+                        loadPage ();
+                    }
+                
+                    body.removeClass ('error-state');
+                }, false);
+                
+            }
+            
+            
+            // Load WebPage
+            function loadPage () {
+                    
+                // Open
+                ref = cordova.InAppBrowser.open (url, "_self", options);
+                
+                
+                // Register events
+                // Errors
+                ref.addEventListener ('loaderror', loadErrorCallBack);
+                
+                
+                // Stop
+                ref.addEventListener ('loadstop', function () { 
+                    
+                    // Set to loaded
+                    loaded = true;
+                    
+                    
+                    // Inject code to add a class to indicate the content
+                    // has been loaded whitin some kind of iframe
+                    ref.executeScript ({code: "(function() { document.getElementsByTagName ('body')[0].className = document.getElementsByTagName ('body')[0].className.concat (' state-iframe') })()"});
+                    
+                    
+                    // Show browser
+                    ref.show ();
+                });
+                
+                
+                // Exit application
+                ref.addEventListener ('exit', function () {
+                
+                    // Has the user exit manually?
+                    if (loaded) {
+                        navigator.app.exitApp ();
+                    }
+                    
+                });
+          
             }
             
             
@@ -50,31 +122,13 @@
             function onDeviceReady() {
 
                 // Check connection
-                if ( ! navigator.onLine) {
+                if (navigator.connection.type === Connection.NONE) {
                     loadErrorCallBack ();
                     return;
+                } else {
+                    loadPage ();
+
                 }
-                
-                try {
-                    
-                    // Open
-                    var ref = cordova.InAppBrowser.open (url, "_self", options);
-                    
-                    
-                    // Register events
-                    // Errors
-                    ref.addEventListener ('loaderror', loadErrorCallBack);
-                    
-                    
-                    // Stop
-                    ref.addEventListener ('loadstop', function () { 
-                        ref.show ();
-                    });
-                    
-                // Handle errors
-                } catch (e) {
-                    loadErrorCallBack ();
-                } 
             }
         </script>
         
@@ -91,49 +145,72 @@
             body {  
               height: 100%;
               width: 100%;
-              font-size: 16px;
             }
- 
+            
             html {
               background: #222;
             }
             
             body {
-              background: #fff;
-              margin: auto;
-              font-size: 1.5em;
-              color: #222;
-              width: 0%;
-            }
-
-            body.loading-state {
-              height: .25rem;
-              top: 0;
-              bottom: 0;
-
-              position: absolute;
-              
-              
-              -webkit-transition: all 3s ease-out;
-                 -moz-transition: all 3s ease-out;
-                      transition: all 3s ease-out;
-            }
-            
-            body.loading-state {
-              width: 100%;
+              font-size: 16px;
+              overflow-x: hidden;
             }
             
             .messages {
               display: none;
               line-height: 1.5;
-              padding: 8rem 3rem;
+              padding: 3rem 3rem;
               font-weight: bold;
-              font-family: serif;                
+              font-family: serif;
+              font-size: 1.5rem;
+            }
+
+            .spinner {
+              display: none;
+              width: 64px;
+              height: 64px;
+              position: relative;
+              margin: -32px auto 0 auto;
+              top: 50%;
+            }
+
+            .double-bounce1, .double-bounce2 {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              background-color: white;
+              opacity: 0.6;
+              position: absolute;
+              top: 0;
+              left: 0;
+
+              -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
+                      animation: sk-bounce 2.0s infinite ease-in-out;
+            }
+
+            .double-bounce2 {
+              -webkit-animation-delay: -1.0s;
+                      animation-delay: -1.0s;
+            }
+
+            @-webkit-keyframes sk-bounce {
+              0%, 100% { -webkit-transform: scale(0.0) }
+              50% { -webkit-transform: scale(1.0) }
+            }
+
+            @keyframes sk-bounce {
+              0%, 100% { 
+                transform: scale(0.0);
+                -webkit-transform: scale(0.0);
+              } 50% { 
+                transform: scale(1.0);
+                -webkit-transform: scale(1.0);
+              }
             }
             
+            
             body.error-state {
-              width: 100%;
-              font-size: 3rem;
+              overflow: hidden;
               text-align: center;
               color: white;
               background-color: crimson;
@@ -142,15 +219,26 @@
             body.error-state .messages {
               display: block;
             }
-
             
+            body.loading-state .spinner {
+              display: block;
+            }            
+
         </style>
         
     </head>
 
     <body onload="onLoad()">
+    
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    
         <div class="messages">
-            <span class="error">Ha ocurrido un error. Por favor, asegurese de que está conectado a Internet...</span>
+            <span class="error">
+                Ha ocurrido un error. Por favor, asegurese de que está conectado a Internet&hellip;
+            </span>
         </div>
     </body>
     
