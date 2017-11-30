@@ -109,6 +109,10 @@
                     // has been loaded whitin some kind of iframe
                     ref.executeScript ({code: "(function() { document.getElementsByTagName ('body')[0].className = document.getElementsByTagName ('body')[0].className.concat (' state-iframe') })()"});
                     
+                    ref.insertCSS ({
+                        file: 'http://155.54.205.223/css-healthio/css/custom.css'
+                    });
+                    
                     
                     // Show browser
                     ref.show ();
