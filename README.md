@@ -24,9 +24,9 @@ El resultado de ejecutar este proceso es la creación de una carpeta llamada Dem
 
 ```
 res/ Aquí van los iconos y recursos de la aplicación
-plugins/ Aq
-www/
-config.xml
+plugins/ Aquí van los plugins de la aplicación
+www/ Aquí va el código fuente de la aplicación
+config.xml Fichero de configuración
 ```
 
 La compilación de aplicaciones puede fallar debido a que hay que aceptar ciertos permisos. Para ello, seguir los pasos indicados aquí, con la respuesta de jxmallett
@@ -97,4 +97,13 @@ de reglas
 ```
 
 También es posible añadir CSS directamente: https://stackoverflow.com/questions/24098838/phonegap-inappbrowser-insertcss-file
-                    
+
+
+## Compilación
+Para desplegar el proyecto, hay que usar el siguiente comando
+
+```
+    > cordova build android
+```
+    
+El fichero generado estará dentro de la carpeta ```platforms\android\build\outputs\apk```
