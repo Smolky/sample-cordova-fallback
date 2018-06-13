@@ -1,4 +1,72 @@
-# Cómo desplegar Cordova WebApps para cargar una página
+# Qué contiene el proyecto
+El presente proyecto contiene la integración de la plataforma IOHealth en una webapp. 
+
+La aplicación consiste en una página de carga, situada en ```www/index.html````que espera a que se cargue la web embedida. Una vez está cargada, permite la interacción de la misma mediante un navegador embebido. Los ajustes de la aplicación embebida se ajustan aplicando una serie de recursos especiales para personalizar, tanto el diseño, como el funcionamiento.
+
+Mientras la web esté en marcha, un proceso se encarga de monitorizar la red buscando si hay cambios en la conectividad del dispositivo. En el momento de ocurrir un cambio, la aplicación informa del suceso al usuario, permitiéndole volver a cargar la página en el momento que la conectividad se restablezca.
+
+# Requerimientos
+- Apache Cordova 7.0.0. 
+- Plugins: dialogs, fcm, inappbrowser, network-information and whitelist
+- Android: ^6.2.3
+
+
+# Ficheros
+Los ficheros públicos de la aplicación se encuentran en la carpeta ```www```
+
+```
+index.html. Contiene la página de carga
+
+css
+    config.json: Fichero con los iconos de Fontello. http://fontello.com/
+    normalize.css: Capa de normalización de estilo entre distintos navegadores.
+    main.css: Fichero de estilo para la página de carga 
+    custom.css: Fichero de estilo específico para la web
+    neosans.otf: Fuente NEOSans
+    fonts/: Carpeta con distintas fuentes de letra usadas, incluyendo los iconos de fontello.
+    
+js/
+    bootstrap.js: Código que carga la aplicación y gestiona los recursos externos
+    custom.js: Scripts que personalizan el funcionamiento de la web en su versión embebida.
+    notifications.js: Script que gestionan el sistema de notificaciones en su versión embebida.
+    jquery.js: Versión de jQuery para la página de carga.
+
+```
+
+
+# Tutorial: Cómo cambiar la URL embebida
+La página web embebida se encuentra alojada en la dirección en el fichero ```www/js/bootstrap.js```.
+
+```
+/* @var url String The URL of the web site */
+var url = "http://iohealth.nimbeo.com/health";
+```
+
+
+# Sistema de notificaciones
+El funcionamiento es el siguiente:
+La web, en su fichera de salud, tiene una casilla que permite al usuario, de forma voluntario, suscribirse al sistema de notificaciones. Este sistema es independiente por dispositivo. Es decir, un mismo paciente, puede tener vinculados distintos dispositivos a su cuenta. Por poner un ejemplo, podría tener vinculadas las notificaciones con su tablet, pero no con su smartphone.
+
+El sistema de notificaciones push se maneja desde el fichero ```www/js/notifications.js```
+
+
+Actualmente, el sistema de notificaciones está vinculado a la cuenta de Firebase
+https://console.firebase.google.com/?hl=es-419
+
+Si se desea, vincular con otra cuenta, los pasos se encuentra disponibles en el siguiente tutorial:
+
+La documentación del plugin se encuentra aquí:
+- https://github.com/fechanique/cordova-plugin-fcm
+
+Servidor de prueba de notificaciones:
+https://cordova-plugin-fcm.appspot.com/
+
+
+NOTA: En caso de cambiar de cuenta, será necesario modificar la web, en el fichero controlador de reportes para especificar la nueva API KEY.
+
+
+
+# Anexo A. Cómo desplegar Cordova WebApps para cargar una página
 El presente documento debe de servir de guía para instalar el entorno de desarrollo de Apache Cordova y poder crear aplicaciones web que integren una página web. 
 
 Los requisitos de este proyecto son:
@@ -47,7 +115,7 @@ La instalación de dichos plugins se realiza desde la consola de comandos
 
 Una vez instalados, dentro del fichero config.xml es necesario añadir las directivas de seguridad
     <access origin="*" />
-    <access origin="http://sepln2017.um.es" />
+    <access origin="http://iohealth.nimbeo.com" />
 
 De esta manera estamos permitiendo que la web http://sepln2017.um.es y todos sus páginas internas se puedan abrir dentro del mismo navegador.
 
@@ -73,9 +141,9 @@ var url = "http://sepln2017.um.es";
 3. Modificar el ficheo `config.xml` para establecer el título de la aplicación
 
 ```xml
-<name>SePLN 2017</name>
+    <name>IOHealth</name>
     <description>
-        XXXIII CONGRESO INTERNACIONAL DE LA SOCIEDAD ESPAÑOLA PARA EL PROCESAMIENTO DEL LENGUAJE NATURAL
+        Plataforma IOHealth para la auto-gestión de la salud
     </description>
     ...
 ```
