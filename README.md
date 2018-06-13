@@ -50,10 +50,10 @@ La web, en su fichera de salud, tiene una casilla que permite al usuario, de for
 El sistema de notificaciones push se maneja desde el fichero ```www/js/notifications.js```
 
 
-Actualmente, el sistema de notificaciones está vinculado a la cuenta de Firebase
+Actualmente, el sistema de notificaciones está vinculado a la cuenta de Firebase.
 https://console.firebase.google.com/?hl=es-419
 
-Si se desea, vincular con otra cuenta, los pasos se encuentra disponibles en el siguiente tutorial:
+Si se desea, vincular con otra cuenta, tendría que crear otra cuenta y generar un nuevo fichero ```google-services.json``` y dejarlo en la carpeta raíz.
 
 La documentación del plugin se encuentra aquí:
 - https://github.com/fechanique/cordova-plugin-fcm
